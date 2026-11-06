@@ -1,0 +1,15 @@
+{
+  "name": "fleet-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Fleet data contract (Vehicle, Trip) and its parsers: the upstream package fleet-insights imports. Sandbox repository for the tb.lx factory.",
+  "engines": { "node": ">=22.18" },
+  "exports": {
+    ".": { "types": "./index.d.ts", "default": "./src/index.js" }
+  },
+  "files": ["src", "index.d.ts"],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}
