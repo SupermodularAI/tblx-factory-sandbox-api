@@ -11,6 +11,8 @@ export interface Vehicle {
 
 export interface Trip {
   vehicleId: string;
+  /** Who drove the trip, when recorded. A non-empty string when present. */
+  driverId?: string;
   /** ISO 8601 start time, UTC. */
   startedAt: string;
   /** ISO 8601 end time, UTC. */

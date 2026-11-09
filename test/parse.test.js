@@ -28,6 +28,15 @@ test("rejects a trip that ends before it starts", () => {
   assert.throws(() => parseTrips([{ ...trip, endedAt: "2026-10-01T07:00:00Z" }]), /trips\[0\]\.endedAt: is before startedAt/);
 });
 
+test("accepts an optional driverId and validates it when present", () => {
+  assert.deepEqual(parseTrips([trip]), [trip]);
+  assert.equal("driverId" in parseTrips([trip])[0], false);
+  assert.deepEqual(parseTrips([{ ...trip, driverId: "D1" }]), [{ ...trip, driverId: "D1" }]);
+  assert.throws(() => parseTrips([{ ...trip, driverId: "" }]), (err) => err instanceof FleetDataError && err.path === "trips[0].driverId");
+  assert.throws(() => parseTrips([trip, { ...trip, driverId: 42 }]), (err) => err instanceof FleetDataError && err.path === "trips[1].driverId");
+  assert.throws(() => parseTrips([{ ...trip, driverId: null }]), /trips\[0\]\.driverId: must be a non-empty string/);
+});
+
 test("parses vehicles and requires a positive service interval", () => {
   assert.deepEqual(parseVehicles([vehicle]), [vehicle]);
   assert.throws(() => parseVehicles([{ ...vehicle, serviceIntervalKm: 0 }]), /vehicles\[0\]\.serviceIntervalKm: must be greater than 0/);
