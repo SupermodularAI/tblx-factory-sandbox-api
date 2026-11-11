@@ -32,3 +32,18 @@ test("parses vehicles and requires a positive service interval", () => {
   assert.deepEqual(parseVehicles([vehicle]), [vehicle]);
   assert.throws(() => parseVehicles([{ ...vehicle, serviceIntervalKm: 0 }]), /vehicles\[0\]\.serviceIntervalKm: must be greater than 0/);
 });
+
+test("keeps driverId when present", () => {
+  assert.deepEqual(parseTrips([{ ...trip, driverId: "D-17" }]), [{ ...trip, driverId: "D-17" }]);
+});
+
+test("parses a trip without driverId unchanged", () => {
+  const [parsed] = parseTrips([trip]);
+  assert.deepEqual(parsed, trip);
+  assert.equal("driverId" in parsed, false);
+});
+
+test("rejects an invalid driverId", () => {
+  assert.throws(() => parseTrips([trip, { ...trip, driverId: "" }]), (err) => err instanceof FleetDataError && err.path === "trips[1].driverId");
+  assert.throws(() => parseTrips([{ ...trip, driverId: 17 }]), /trips\[0\]\.driverId: must be a non-empty string/);
+});
