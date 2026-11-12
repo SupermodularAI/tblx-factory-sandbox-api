@@ -19,6 +19,8 @@ export interface Trip {
   fuelLitres: number;
   /** Odometer reading at the end of the trip, in km. */
   odometerKm: number;
+  /** Who drove the trip. Absent when the driver is not recorded. */
+  driverId?: string;
 }
 
 /** Thrown by the parsers; `path` names the offending field, e.g. `trips[2].distanceKm`. */
