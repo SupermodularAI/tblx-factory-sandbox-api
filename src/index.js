@@ -24,6 +24,7 @@ export function parseTrips(input) {
       odometerKm: nonNegative(o, "odometerKm", at),
     };
     if (Date.parse(trip.endedAt) < Date.parse(trip.startedAt)) throw new FleetDataError(`${at}.endedAt`, "is before startedAt");
+    if (o.driverId !== undefined) trip.driverId = text(o, "driverId", at);
     return trip;
   });
 }
