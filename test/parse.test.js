@@ -32,3 +32,21 @@ test("parses vehicles and requires a positive service interval", () => {
   assert.deepEqual(parseVehicles([vehicle]), [vehicle]);
   assert.throws(() => parseVehicles([{ ...vehicle, serviceIntervalKm: 0 }]), /vehicles\[0\]\.serviceIntervalKm: must be greater than 0/);
 });
+
+test("keeps each valid fuelType", () => {
+  for (const fuelType of ["diesel", "petrol", "electric"]) {
+    assert.deepEqual(parseVehicles([{ ...vehicle, fuelType }]), [{ ...vehicle, fuelType }]);
+  }
+});
+
+test("parses a vehicle without fuelType as before", () => {
+  const [v] = parseVehicles([vehicle]);
+  assert.deepEqual(v, vehicle);
+  assert.equal("fuelType" in v, false);
+});
+
+test("rejects an invalid fuelType with its path", () => {
+  assert.throws(() => parseVehicles([vehicle, { ...vehicle, fuelType: "hydrogen" }]), (err) => err instanceof FleetDataError && err.path === "vehicles[1].fuelType");
+  assert.throws(() => parseVehicles([{ ...vehicle, fuelType: null }]), /vehicles\[0\]\.fuelType/);
+  assert.throws(() => parseVehicles([{ ...vehicle, fuelType: 1 }]), /vehicles\[0\]\.fuelType/);
+});

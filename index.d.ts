@@ -1,5 +1,7 @@
 // The public contract of fleet-api. Keep it in step with src/index.js: fleet-insights imports these names.
 
+export type FuelType = "diesel" | "petrol" | "electric";
+
 export interface Vehicle {
   id: string;
   model: string;
@@ -7,6 +9,8 @@ export interface Vehicle {
   lastServiceKm: number;
   /** Service interval for this model, in km. */
   serviceIntervalKm: number;
+  /** Fuel the vehicle runs on. Absent when unknown. */
+  fuelType?: FuelType;
 }
 
 export interface Trip {

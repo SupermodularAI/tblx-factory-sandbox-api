@@ -1,6 +1,8 @@
 // fleet-api: the fleet data contract and its parsers. Plain JavaScript (ESM) so it runs from node_modules,
 // where Node does not strip TypeScript types. The types live in ../index.d.ts.
 
+const FUEL_TYPES = ["diesel", "petrol", "electric"];
+
 export class FleetDataError extends Error {
   /** @param {string} path @param {string} message */
   constructor(path, message) {
@@ -33,12 +35,14 @@ export function parseVehicles(input) {
   return list(input, "vehicles").map((raw, i) => {
     const at = `vehicles[${i}]`;
     const o = object(raw, at);
-    return {
+    const vehicle = {
       id: text(o, "id", at),
       model: text(o, "model", at),
       lastServiceKm: nonNegative(o, "lastServiceKm", at),
       serviceIntervalKm: positive(o, "serviceIntervalKm", at),
     };
+    if (o.fuelType !== undefined) vehicle.fuelType = fuelType(o, at);
+    return vehicle;
   });
 }
 
@@ -81,5 +85,11 @@ function nonNegative(o, key, at) {
 function positive(o, key, at) {
   const v = nonNegative(o, key, at);
   if (v === 0) throw new FleetDataError(`${at}.${key}`, "must be greater than 0");
+  return v;
+}
+
+function fuelType(o, at) {
+  const v = o.fuelType;
+  if (!FUEL_TYPES.includes(v)) throw new FleetDataError(`${at}.fuelType`, 'must be one of "diesel", "petrol", "electric"');
   return v;
 }
